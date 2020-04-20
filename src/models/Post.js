@@ -41,7 +41,10 @@ export const updatePost = async (root, { id, content }) => {
 
 export const postById = async (root, { id }) => await Post.findById(id);
 
-export const posts = async () => await Post.find();
+export const posts = async (root, { page, perPage }) => ({
+  list: await Post.find().limit(perPage).skip((page - 1) * perPage),
+  count: Post.countDocuments(),
+});
 
 export const getPostsByAuthor = async user => await Post.find({ author: user.id });
 

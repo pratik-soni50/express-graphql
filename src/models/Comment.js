@@ -35,7 +35,10 @@ export const createComment = async (root, { post, content }, context) => {
   }
 }
 
-export const comments = async () => await Comment.find();
+export const comments = async (root, { page, perPage }) => ({
+  list: await Comment.find().limit(perPage).skip((page - 1) * perPage),
+  count: Comment.countDocuments(),
+});
 
 export const getPostComments = async post => await Comment.find({ post: post.id });
 

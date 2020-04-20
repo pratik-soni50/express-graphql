@@ -46,7 +46,10 @@ export const login = async (root, { email, password }) => {
   return null;
 }
 
-export const users = async () => await User.find();
+export const users = async (root, { page, perPage }) => ({
+  list: await User.find().limit(perPage).skip((page - 1) * perPage),
+  count: User.countDocuments(),
+});
 
 export const getPostAuthor = async post => await User.findById(post.author);
 

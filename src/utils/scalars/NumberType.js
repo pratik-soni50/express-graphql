@@ -9,7 +9,7 @@ const NumberType = new GraphQLScalarType({
   serialize: parseNumber,
   parseValue: parseNumber,
   parseLiteral(ast) {
-    if (ast.kind === Kind.Int || ast.kind === Kind.FLOAT) {
+    if (ast.kind === Kind.INT || ast.kind === Kind.FLOAT || ast.kind === Kind.STRING) {
       return Number(ast.value);
     }
     return null;

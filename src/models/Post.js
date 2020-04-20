@@ -30,7 +30,7 @@ export const createPost = async (root, { content }, context) => {
     await post.save();
     return post;
   } catch (e) {
-    throw new ApolloError("Internal Server Error");
+    throw new ApolloError('Internal Server Error');
   }
 }
 
@@ -49,5 +49,22 @@ export const posts = async (root, { page, perPage }) => ({
 export const getPostsByAuthor = async user => await Post.find({ author: user.id });
 
 export const getPostByComment = async comment => await Post.findById(comment.post);
+
+export const deletePost = async (root, { id }, context) => {
+  const { currentUser } = context;
+  if (currentUser.role === 'ADMIN') {
+    return Boolean(await Post.findByIdAndDelete(id));
+  } else {
+    const post = await Post.findById(id);
+    if(!post) {
+      throw new ApolloError('Requested post didn\'t found');
+    }
+    if(post.author.toString() === currentUser.id) {
+      return Boolean(await Post.findByIdAndDelete(id));
+    } else {
+      throw new AuthenticationError('User can delete only own Posts');
+    }
+  }
+}
 
 export default Post;

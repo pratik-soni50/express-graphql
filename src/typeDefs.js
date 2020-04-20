@@ -62,6 +62,7 @@ const typeDefs = gql`
     signUp(name: String!, email:String!, password:String): User
     createPost(content: String!): Post @auth
     updatePost(id: ID!, content: String!): Post @auth
+    deletePost(id: ID!): Boolean @auth
     createComment(post: String!, content: String!): Comment @auth
   }
 `;

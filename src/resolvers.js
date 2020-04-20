@@ -1,6 +1,6 @@
 import scalars from './utils/scalars';
 import User, { signUp, login, users, getPostAuthor } from './models/User';
-import Post, { posts, createPost, getPostsByAuthor, getPostByComment, updatePost } from './models/Post';
+import Post, { posts, createPost, getPostsByAuthor, getPostByComment, updatePost, deletePost } from './models/Post';
 import Comment, { createComment, comments, getPostComments } from './models/Comment';
 
 const resolvers = {
@@ -16,6 +16,7 @@ const resolvers = {
     createPost,
     updatePost,
     createComment,
+    deletePost,
   },
   User: {
     posts: getPostsByAuthor

@@ -1,3 +1,4 @@
+import { ApolloError, AuthenticationError } from 'apollo-server-express';
 import { Schema, model } from 'mongoose';
 
 model.prototype.findByIdAndUpdateSync = function (...rest) {
@@ -16,13 +17,21 @@ const PostSchema = new Schema({
 
 const Post = model('Post', PostSchema);
 
-export const createPost = async (root, { author, content }) => {
-  const post = new Post({
-    author,
-    content,
-  });
-  await post.save();
-  return post;
+export const createPost = async (root, { content }, context) => {
+  const { currentUser } = context
+  if (!currentUser || !currentUser.id) {
+    throw new AuthenticationError('Unable to find user, Please login again');
+  }
+  try {
+    const post = new Post({
+      author: context.currentUser.id,
+      content,
+    });
+    await post.save();
+    return post;
+  } catch (e) {
+    throw new ApolloError("Internal Server Error");
+  }
 }
 
 export const updatePost = async (root, { id, content }) => {

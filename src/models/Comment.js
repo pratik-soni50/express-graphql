@@ -1,3 +1,4 @@
+import { ApolloError, AuthenticationError } from 'apollo-server-express';
 import { Schema, model } from 'mongoose';
 
 const CommentSchema = new Schema({
@@ -16,10 +17,22 @@ const CommentSchema = new Schema({
 
 const Comment = model('Comment', CommentSchema);
 
-export const createComment = async (root, { author, post, content }) => {
-  const comment = new Comment({ author, post, content });
-  await comment.save();
-  return comment;
+export const createComment = async (root, { post, content }, context) => {
+  const { currentUser } = context
+  if (!currentUser || !currentUser.id) {
+    throw new AuthenticationError('Unable to find user, Please login again');
+  }
+  try {
+    const comment = new Comment({
+      author: context.currentUser.id,
+      post,
+      content,
+    });
+    await comment.save();
+    return comment;
+  } catch (e) {
+    throw new ApolloError("Internal Server Error");
+  }
 }
 
 export const comments = async () => await Comment.find();

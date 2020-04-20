@@ -1,26 +1,32 @@
 import { Schema, model } from 'mongoose';
 import { hash, compare } from 'bcrypt';
+import { generateToken } from '../utils/jwt';
 
 const UserSchema = new Schema({
   name: String,
   email: String,
   password: String,
-  role: Number,
+  role: String,
 }, {
   timestamps: true,
 });
 
 const User = model("User", UserSchema);
 
-export const signUp = async (root, { name, email, password }) => {
+export const signUp = async (root, { name, email, password }, context) => {
   const newUser = new User({
     name,
     email,
     password: password ? await hash(password, 2) : '',
-    role: 0,
+    role: "ADMIN",
   });
-  console.log('The password is', password);
   await newUser.save();
+  context.currentUser = {
+    id: newUser.id,
+    name: newUser.name,
+    email: newUser.email,
+    role: newUser.role,
+  };
   return newUser;
 }
 
@@ -29,7 +35,12 @@ export const login = async (root, { email, password }) => {
   if (user && user.password) {
     const data = await compare(password, user.password);
     if (data) {
-      return user;
+      return generateToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      });
     }
   }
   return null;

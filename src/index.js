@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import typeDefs from './typeDefs';
 import resolvers from './resolvers';
 import schemaDirectives from './directives';
+import context from './utils/createContext';
 
 const startServer = async () => {
   const app = express();
@@ -13,7 +14,11 @@ const startServer = async () => {
   app.use(cors());
 
   const server = new ApolloServer({
-    typeDefs, resolvers, schemaDirectives
+    typeDefs,
+    resolvers,
+    schemaDirectives,
+    context,
+    tracing: true,
   });
 
   server.applyMiddleware({ app });

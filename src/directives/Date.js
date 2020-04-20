@@ -1,14 +1,15 @@
 import { SchemaDirectiveVisitor } from 'apollo-server-express';
 import { defaultFieldResolver } from 'graphql';
-import format from 'date-fns/format'
+import dateFormat from 'date-fns/format'
 
 class DateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field) {
+    const { format } = this.args;
     const { resolve = defaultFieldResolver } = field;
     field.resolve = async function (...args) {
       const result = await resolve.apply(this, args);
       try {
-        return format(result, 'MMM do yyyy');
+        return dateFormat(result, format || 'MMM do yyyy');
       } catch {
         return result;
       }

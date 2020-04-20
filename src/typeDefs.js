@@ -3,8 +3,16 @@ import { gql } from "apollo-server-express";
 const typeDefs = gql`
   scalar NumberType
 
-  directive @date on FIELD_DEFINITION
+  enum Role {
+    ADMIN
+    MANAGER
+    REVIEWER
+    USER
+  }
+
+  directive @date(format: String = "MMM do yyyy") on FIELD_DEFINITION
   directive @secureField on FIELD_DEFINITION
+  directive @auth(role: Role = ADMIN) on FIELD_DEFINITION
 
   type User {
     id: ID!
@@ -33,17 +41,16 @@ const typeDefs = gql`
     updatedAt: String @date
   }
   type Query {
-    hello: String!
-    login(email: String!, password: String!): User
-    users: [User!]!
-    posts: [Post!]!
-    comments: [Comment!]!
+    login(email: String!, password: String!): String
+    users: [User!]! @auth(role: USER)
+    posts: [Post!]! @auth(role: USER)
+    comments: [Comment!]! @auth(role: USER)
   }
   type Mutation {
     signUp(name: String!, email:String!, password:String): User
-    createPost(author: String!, content: String!): Post
-    updatePost(id: ID!, content: String!): Post
-    createComment(author: String!, post: String!, content: String!): Comment
+    createPost(content: String!): Post @auth(role: USER)
+    updatePost(id: ID!, content: String!): Post @auth(role: USER)
+    createComment(post: String!, content: String!): Comment @auth(role: USER)
   }
 `;
 

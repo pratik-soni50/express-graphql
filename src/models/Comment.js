@@ -42,4 +42,21 @@ export const comments = async (root, { page, perPage }) => ({
 
 export const getPostComments = async post => await Comment.find({ post: post.id });
 
+export const deleteComment = async (root, { id }, context) => {
+  const { currentUser } = context;
+  if (currentUser.role === 'ADMIN') {
+    return Boolean(await Comment.findByIdAndDelete(id));
+  } else {
+    const comment = await Comment.findById(id);
+    if(!comment) {
+      throw new ApolloError('Requested comment didn\'t found');
+    }
+    if(comment.author.toString() === currentUser.id) {
+      return Boolean(await Comment.findByIdAndDelete(id));
+    } else {
+      throw new AuthenticationError('User can delete only own Comments');
+    }
+  }
+}
+
 export default Comment;

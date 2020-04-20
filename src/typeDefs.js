@@ -64,6 +64,7 @@ const typeDefs = gql`
     updatePost(id: ID!, content: String!): Post @auth
     deletePost(id: ID!): Boolean @auth
     createComment(post: String!, content: String!): Comment @auth
+    deleteComment(id: ID!): Boolean @auth
   }
 `;
 

@@ -18,9 +18,13 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
     "babel-loader": "^8.1.0",
+    "core-js": "^3.6.5",
     "nodemon": "^2.0.3",
+    "regenerator-runtime": "^0.13.5",
+    "strip-loader": "^0.1.2",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "apollo-server-express": "^2.12.0",

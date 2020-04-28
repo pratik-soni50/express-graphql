@@ -1,9 +1,10 @@
+const nodeExternals = require('webpack-node-externals');
 const paths = require('./paths');
 
 var rules = [
   {
     test: /\.(js|mjs)$/,
-    exclude: /(node_modules|bower_components)/,
+    exclude: /node_modules/,
     use: {
       loader: 'babel-loader',
       options: {
@@ -20,7 +21,7 @@ module.exports = {
   mode: 'production',
   devtool: false,
   entry: {
-    index: paths.appPath + '/server.js',
+    index: ['core-js/stable', 'regenerator-runtime/runtime', paths.appSrc + '/index.js'],
   },
   output: {
     filename: '[name].js',
@@ -30,6 +31,8 @@ module.exports = {
   performance: {
     hints: 'warning'
   },
+  target: 'node',
+  externals: [nodeExternals()],
   optimization: {
     namedModules: false,
     namedChunks: false,
